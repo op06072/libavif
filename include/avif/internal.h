@@ -322,6 +322,8 @@ typedef struct avifReformatState
     avifYUVColorSpaceInfo yuv;
 } avifReformatState;
 
+static avifBool avifPrepareReformatState(const avifImage * image, const avifRGBImage * rgb, avifReformatState * state);
+
 // Retrieves the pixel value at position (x, y) expressed as floats in [0, 1]. If the image's format doesn't have alpha,
 // rgbaPixel[3] is set to 1.0f.
 void avifGetRGBAPixel(const avifRGBImage * src, uint32_t x, uint32_t y, const avifRGBColorSpaceInfo * info, float rgbaPixel[4]);
