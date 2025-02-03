@@ -367,6 +367,7 @@ static avifBool avifProcessAOMOptionsPreInit(avifCodec * codec, avifBool alpha, 
     return AVIF_TRUE;
 }
 
+#if !defined(HAVE_AOM_CODEC_SET_OPTION)
 typedef enum
 {
     AVIF_AOM_OPTION_NUL = 0,
@@ -395,7 +396,7 @@ static const struct aomOptionDef aomOptionDefs[] = {
     // Adaptive quantization mode
     { "aq-mode", AV1E_SET_AQ_MODE, AVIF_AOM_OPTION_UINT, NULL },
     // Constant/Constrained Quality level
-    { "qp-level", AOME_SET_QP, AVIF_AOM_OPTION_UINT, NULL },
+    { "qp-level", AOME_SET_CQ_LEVEL, AVIF_AOM_OPTION_UINT, NULL },
     // Enable delta quantization in chroma planes
     { "enable-chroma-deltaq", AV1E_SET_ENABLE_CHROMA_DELTAQ, AVIF_AOM_OPTION_INT, NULL },
     // Bias towards block sharpness in rate-distortion optimization of transform coefficients
@@ -410,6 +411,7 @@ static const struct aomOptionDef aomOptionDefs[] = {
     // Sentinel
     { NULL, 0, AVIF_AOM_OPTION_NUL, NULL }
 };
+#endif // !defined(HAVE_AOM_CODEC_SET_OPTION)
 
 static avifBool avifProcessAOMOptionsPostInit(avifCodec * codec, avifBool alpha)
 {
@@ -706,7 +708,7 @@ static avifResult avmCodecEncodeImage(avifCodec * codec,
         codec->internal->encoderInitialized = AVIF_TRUE;
 
         if ((cfg->rc_end_usage == AOM_CQ) || (cfg->rc_end_usage == AOM_Q)) {
-            aom_codec_control(&codec->internal->encoder, AOME_SET_QP, quantizer);
+            aom_codec_control(&codec->internal->encoder, AOME_SET_CQ_LEVEL, quantizer);
         }
         avifBool lossless = (quantizer == AVIF_QUANTIZER_LOSSLESS);
         if (lossless) {
@@ -829,7 +831,7 @@ static avifResult avmCodecEncodeImage(avifCodec * codec,
         }
         if (encoderChanges & quantizerChangedBit) {
             if ((cfg->rc_end_usage == AOM_CQ) || (cfg->rc_end_usage == AOM_Q)) {
-                aom_codec_control(&codec->internal->encoder, AOME_SET_QP, quantizer);
+                aom_codec_control(&codec->internal->encoder, AOME_SET_CQ_LEVEL, quantizer);
             }
             avifBool lossless = (quantizer == AVIF_QUANTIZER_LOSSLESS);
             aom_codec_control(&codec->internal->encoder, AV1E_SET_LOSSLESS, lossless);
@@ -1011,7 +1013,8 @@ static avifResult avmCodecEncodeImage(avifCodec * codec,
         encodeFlags |= AOM_EFLAG_FORCE_KF;
     }
     if (codec->internal->currentLayer > 0) {
-        encodeFlags |= AOM_EFLAG_NO_REF_GF | AOM_EFLAG_NO_REF_ARF | AOM_EFLAG_NO_REF_BWD | AOM_EFLAG_NO_REF_ARF2 | AOM_EFLAG_NO_UPD_ALL;
+        encodeFlags |= AOM_EFLAG_NO_REF_GF | AOM_EFLAG_NO_REF_ARF | AOM_EFLAG_NO_REF_BWD | AOM_EFLAG_NO_REF_ARF2 | AOM_EFLAG_NO_UPD_LAST | AOM_EFLAG_NO_UPD_GF |
+        AOM_EFLAG_NO_UPD_ARF;
     }
     aom_codec_err_t encodeErr = aom_codec_encode(&codec->internal->encoder, &aomImage, 0, 1, encodeFlags);
     avifFree(monoUVPlane);
