@@ -6,8 +6,7 @@
 
 #if !defined(__cplusplus)
 #error "This a C++ only header. Use avif/avif.h for C."
-#endif
-
+#else
 #include <memory>
 
 #include "avif/avif.h"
@@ -31,5 +30,6 @@ using ImagePtr = std::unique_ptr<avifImage, UniquePtrDeleter>;
 using GainMapPtr = std::unique_ptr<avifGainMap, UniquePtrDeleter>;
 
 } // namespace avif
+#endif
 
 #endif // AVIF_AVIF_CXX_H
