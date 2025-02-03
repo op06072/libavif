@@ -23,21 +23,31 @@ bool checkComplianceStd(Box const & file, SpecDesc const * spec);
 
 SpecDesc const * specFind(const char * name);
 std::vector<SpecDesc const *> & g_allSpecs();
-extern const SpecDesc * const globalSpecAvif;
+extern const SpecDesc *const specAvif;
+extern const SpecDesc *const specAv1Hdr10plus;
+extern const SpecDesc *const specHeif;
+extern const SpecDesc *const specIsobmff;
+extern const SpecDesc *const specMiaf;
+/*extern const SpecDesc * const globalSpecAvif;
 extern const SpecDesc * const globalSpecAv1Hdr10plus;
 extern const SpecDesc * const globalSpecHeif;
 extern const SpecDesc * const globalSpecIsobmff;
-extern const SpecDesc * const globalSpecMiaf;
+extern const SpecDesc * const globalSpecMiaf;*/
 
 extern "C" avifResult avifIsCompliant(const uint8_t * data, size_t size)
 {
     // See compliance_warden.sh.
     if (g_allSpecs().empty()) {
-        registerSpec(globalSpecAvif);
+        /*registerSpec(globalSpecAvif);
         registerSpec(globalSpecAv1Hdr10plus);
         registerSpec(globalSpecHeif);
         registerSpec(globalSpecIsobmff);
-        registerSpec(globalSpecMiaf);
+        registerSpec(globalSpecMiaf);*/
+        registerSpec(specAvif);
+        registerSpec(specAv1Hdr10plus);
+        registerSpec(specHeif);
+        registerSpec(specIsobmff);
+        registerSpec(specMiaf);
     }
 
     // Inspired from ext/ComplianceWarden/src/app/cw.cpp
