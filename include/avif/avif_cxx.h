@@ -5,7 +5,7 @@
 #define AVIF_AVIF_CXX_H
 
 #if !defined(__cplusplus)
-#error "This a C++ only header. Use avif/avif.h for C."
+#warning "This a C++ only header. Use avif/avif.h for C."
 #else
 #include <memory>
 
