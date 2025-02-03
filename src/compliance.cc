@@ -8,8 +8,16 @@
 #include "avif/internal.h"
 
 // From ../ext/ComplianceWarden/src/utils/
-#include "box_reader_impl.h"
-#include "spec.h"
+#if __has_include(<complianceWarden/src/core/box_reader_impl.h>)
+#include <complianceWarden/src/core/box_reader_impl.h>
+#else
+#include "core/box_reader_impl.h"
+#endif
+#if __has_include(<complianceWarden/src/core/spec.h>)
+#include <complianceWarden/src/core/spec.h>
+#else
+#include "core/spec.h"
+#endif
 
 bool checkComplianceStd(Box const & file, SpecDesc const * spec);
 
